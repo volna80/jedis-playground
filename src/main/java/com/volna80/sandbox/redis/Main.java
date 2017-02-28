@@ -40,7 +40,7 @@ public class Main {
 
             //run 2
             total = testRun(jedis);
-            result.append("Total: avg ").append(total / 100).append("ms.\n");
+            result.append("Run 3: avg ").append(total / 100).append("ms.\n");
 
             System.out.println(result);
 
@@ -65,7 +65,10 @@ public class Main {
 
             //case 1: just set without a pipeline
 
-            case1(data, jedis);
+//            case1(data, jedis);
+//            case2(data, jedis);
+//            case3(data, jedis);
+            case4(data, jedis);
 
 
             final long finish = System.currentTimeMillis();
@@ -96,10 +99,35 @@ public class Main {
         Pipeline pipelined = jedis.pipelined();
 
         for(Record rec : data.data){
-            pipelined.set("C1:" + rec.instrument, gson.toJson(rec));
+            pipelined.set("C2:" + rec.instrument, gson.toJson(rec));
         }
 
-        pipelined.exec();
+    }
+
+    private void case3(TestData data, Jedis jedis) {
+
+        Gson gson = new Gson();
+
+        jedis.set("C3", gson.toJson(data));
+
+    }
+
+    private void case4(TestData data, Jedis jedis) {
+
+        Pipeline pipelined = jedis.pipelined();
+
+        for(Record rec : data.data){
+            final String key = "C4:" + rec.instrument;
+            pipelined.hset(key, "instrument", rec.instrument );
+            pipelined.hset(key, "mid", String.valueOf(rec.midPrice));
+            pipelined.hset(key, "dv01", String.valueOf(rec.dv01));
+            pipelined.hset(key, "leg1", rec.leg1.instrument);
+            pipelined.hset(key, "leg1:mid", String.valueOf(rec.leg1.midPrice));
+            pipelined.hset(key, "leg1:dv01", String.valueOf(rec.leg1.dv01));
+            pipelined.hset(key, "leg2", rec.leg2.instrument);
+            pipelined.hset(key, "leg2:mid", String.valueOf(rec.leg2.midPrice));
+            pipelined.hset(key, "leg2:dv01", String.valueOf(rec.leg2.dv01));
+        }
 
     }
 
