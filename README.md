@@ -49,6 +49,8 @@ Run 2: avg 52ms.
 Run 3: avg 56ms.
 ````
 
+note: a resource monitor shows more extensive CPU usage. It is easy explain that we do 10x more requests vs cases where we save a recond as a single json string
+
 #### case 4.1: write 10000 recods as a single HASH where instruments are json fields 
 
 ````
@@ -56,8 +58,6 @@ Run 1: avg 57ms.
 Run 2: avg 51ms.
 Run 3: avg 51ms.
 ````
-
-note: a resource monitor shows more extensive CPU usage
 
 
 #### case 5: read 10000 records GET (from case 1)
