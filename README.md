@@ -41,7 +41,7 @@ Run 2: avg 48ms.
 Run 3: avg 49ms.
 ````
 
-#### case 4: write 10000 recods as HASH (pipeline)
+#### case 4: write 10000 recods as HASH per instrument (pipeline) : fields plain values
 
 ````
 Run 1: avg 64ms.
@@ -49,6 +49,52 @@ Run 2: avg 52ms.
 Run 3: avg 56ms.
 ````
 
+#### case 4.1: write 10000 recods as a single HASH where instruments are json fields 
+
+````
+Run 1: avg 57ms.
+Run 2: avg 51ms.
+Run 3: avg 51ms.
+````
+
 note: a resource monitor shows more extensive CPU usage
+
+
+#### case 5: read 10000 records GET (from case 1)
+
+````
+Run 1: avg 226ms.
+Run 2: avg 229ms.
+Run 3: avg 228ms.
+````
+
+#### case 6: read 10000 records as one key (from case 3)
+
+````
+Run 1: avg 50ms.
+Run 2: avg 50ms.
+Run 3: avg 47ms.
+````
+
+
+#### case 7: read 10000 records as HASH (from case 4)
+
+````
+Run 1: avg 1546ms.
+Run 2: avg 1550ms.
+Run 3: avg 1533ms.
+````
+
+
+#### case 8: read 10000 records as MGET (from case 1)
+
+````
+Run 1: avg 59ms.
+Run 2: avg 55ms.
+Run 3: avg 57ms.
+````
+
+
+
 
 

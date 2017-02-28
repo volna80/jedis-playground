@@ -11,6 +11,7 @@ import java.util.Random;
  */
 public class TestData {
 
+    public static final int NUM = 10000;
     public List<Record> data;
 
     public static TestData generate(){
@@ -21,10 +22,10 @@ public class TestData {
 
         data.data = new ArrayList<Record>();
 
-        for(int i = 0; i < 10000 ; i++){
+        for(int i = 0; i < NUM; i++){
 
             Record rec = new Record();
-            rec.instrument = "IRSUSD" + i;
+            rec.instrument = getInstrumentName(i);
             rec.dv01 = random.nextDouble();
             rec.midPrice = random.nextDouble();
 
@@ -47,6 +48,10 @@ public class TestData {
         }
 
         return data;
+    }
+
+    public static String getInstrumentName(int i) {
+        return "IRSUSD" + i;
     }
 
 }
