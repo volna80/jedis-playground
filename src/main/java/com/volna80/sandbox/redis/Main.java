@@ -6,6 +6,7 @@ import com.volna80.sandbox.redis.data.TestData;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Pipeline;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,30 +28,21 @@ public class Main {
             jedis = pool.getResource();
 
 
+            StringBuilder result = new StringBuilder();
 
 
-            int i = 0;
+            //warm up
+            long total = testRun(jedis);
+            result.append("Run 1: avg ").append(total / 100).append("ms.\n");
+            //run 1
+            total = testRun(jedis);
+            result.append("Run 2: avg ").append(total / 100).append("ms.\n");
 
-            while(i < 100){
+            //run 2
+            total = testRun(jedis);
+            result.append("Total: avg ").append(total / 100).append("ms.\n");
 
-                i++;
-
-                final TestData data = TestData.generate();
-
-                final long start = System.currentTimeMillis();
-
-                //case 1: just set without a pipeline
-
-                case1(data, jedis);
-
-
-                final long finish = System.currentTimeMillis();
-
-
-                System.out.println("iteration: " + i + ", time: " + (finish - start) + " ms. ");
-
-                Thread.sleep(1000);
-            }
+            System.out.println(result);
 
         } finally {
             if(jedis != null){
@@ -60,6 +52,33 @@ public class Main {
 
     }
 
+    private long testRun(Jedis jedis) throws InterruptedException {
+        int i = 0;
+        long total = 0;
+        while(i < 100){
+
+            i++;
+
+            final TestData data = TestData.generate();
+
+            final long start = System.currentTimeMillis();
+
+            //case 1: just set without a pipeline
+
+            case1(data, jedis);
+
+
+            final long finish = System.currentTimeMillis();
+            final long time = finish - start;
+            total += time;
+
+            System.out.println("iteration: " + i + ", time: " + time + " ms. ");
+
+            Thread.sleep(100);
+        }
+        return total;
+    }
+
     private void case1(TestData data, Jedis jedis) {
 
         Gson gson = new Gson();
@@ -67,6 +86,20 @@ public class Main {
         for(Record rec : data.data){
             jedis.set("C1:" + rec.instrument, gson.toJson(rec));
         }
+
+    }
+
+    private void case2(TestData data, Jedis jedis) {
+
+        Gson gson = new Gson();
+
+        Pipeline pipelined = jedis.pipelined();
+
+        for(Record rec : data.data){
+            pipelined.set("C1:" + rec.instrument, gson.toJson(rec));
+        }
+
+        pipelined.exec();
 
     }
 
